@@ -35,8 +35,13 @@ class _TodoAppState extends State<TodoApp> {
   var controller = TextEditingController();
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
     _loadMessages();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
@@ -50,13 +55,7 @@ class _TodoAppState extends State<TodoApp> {
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  firestore
-                      .collection("users")
-                      .doc("3BIxVCSwl8jXUMuW6JKc")
-                      .set({
-                    "todos": [...todos, controller.text]
-                  });
-                  controller.clear();
+                  addTodo();
                 },
                 child: Icon(Icons.add),
               ),
@@ -64,8 +63,29 @@ class _TodoAppState extends State<TodoApp> {
             Expanded(
               child: ListView.builder(
                 itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(todos[index]),
+                  return Dismissible(
+                    key: ValueKey(index),
+                    child: Container(
+                      padding: EdgeInsets.all(8),
+                      alignment: Alignment.centerLeft,
+                      width: double.infinity,
+                      height: 50,
+                      child: Text(todos[index]),
+                      color: Colors.white,
+                    ),
+                    background: Container(
+                      padding: EdgeInsets.only(left: 16),
+                      color: Colors.red,
+                      alignment: Alignment.centerLeft,
+                      child: const Icon(
+                        Icons.delete,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    onDismissed: (direction) {
+                      deleteAt(index);
+                    },
+                    direction: DismissDirection.startToEnd,
                   );
                 },
                 itemCount: todos.length,
@@ -75,5 +95,28 @@ class _TodoAppState extends State<TodoApp> {
         ),
       ),
     );
+  }
+
+  void addTodo() {
+    setState(() {
+      todos = [...todos, controller.text];
+    });
+    firestore
+        .collection("users")
+        .doc("3BIxVCSwl8jXUMuW6JKc")
+        .set({
+      "todos": todos,
+    });
+    controller.clear();
+  }
+
+  void deleteAt(int index) {
+    setState(() {
+      todos.removeAt(index);
+    });
+    firestore
+        .collection("users")
+        .doc("3BIxVCSwl8jXUMuW6JKc")
+        .set({"todos": todos});
   }
 }
