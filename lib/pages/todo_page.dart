@@ -17,6 +17,11 @@ class _TodoPageState extends State<TodoPage> {
 
   var controller = TextEditingController();
 
+  var documentStream = FirebaseFirestore.instance
+      .collection('users')
+      .doc('3BIxVCSwl8jXUMuW6JKc')
+      .snapshots();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -38,9 +43,55 @@ class _TodoPageState extends State<TodoPage> {
               ),
             ),
             Expanded(
-              child: TodoList(
-                firestore: firestore,
-                todos: todos,
+              child: StreamBuilder<DocumentSnapshot>(
+                stream: documentStream,
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+
+                  var foundTodos =
+                      (snapshot.data?.get("todos") as List<dynamic>)
+                          .map((e) => Todo.fromJson(e))
+                          .toList();
+
+                  todos = foundTodos;
+
+                  return ListView.builder(
+                    itemBuilder: (context, index) {
+                      if(todos[index].completed) {
+                        return SizedBox();
+                      }
+                      return Dismissible(
+                        key: GlobalKey(),
+                        child: Container(
+                          padding: EdgeInsets.all(8),
+                          alignment: Alignment.centerLeft,
+                          width: double.infinity,
+                          height: 50,
+                          child: Text(todos[index].title),
+                          color: Colors.white,
+                        ),
+                        background: Container(
+                          padding: EdgeInsets.only(left: 16),
+                          color: Colors.red,
+                          alignment: Alignment.centerLeft,
+                          child: const Icon(
+                            Icons.delete,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        onDismissed: (direction) {
+                          deleteAt(index);
+                        },
+                        direction: DismissDirection.startToEnd,
+                      );
+                    },
+                    itemCount: todos.length,
+                  );
+                },
               ),
             ),
           ],
@@ -50,13 +101,22 @@ class _TodoPageState extends State<TodoPage> {
   }
 
   void addTodo() {
-    setState(() {
-      todos = [...todos, Todo(controller.text, false)];
-    });
+    todos.add(Todo(controller.text, false));
     var jsonString = todos.map((todo) => todo.toJson()).toList();
+    print(jsonString);
     firestore.collection("users").doc("3BIxVCSwl8jXUMuW6JKc").set({
       "todos": jsonString,
     });
     controller.clear();
+  }
+
+  void deleteAt(int index) async {
+    todos[index].completed = true;
+    List<Map<String, dynamic>> jsonTodos =
+        todos.map((e) => e.toJson()).toList();
+    await firestore
+        .collection("users")
+        .doc("3BIxVCSwl8jXUMuW6JKc")
+        .set({"todos": jsonTodos});
   }
 }
