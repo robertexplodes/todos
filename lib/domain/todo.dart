@@ -11,5 +11,4 @@ class Todo {
   Map<String, dynamic> toJson() {
     return {'title': title, 'completed': completed};
   }
-
 }

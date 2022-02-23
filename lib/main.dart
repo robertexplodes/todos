@@ -8,7 +8,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(TodoApp());
+  runApp(const TodoApp());
 }
 
 class TodoApp extends StatefulWidget {

@@ -31,15 +31,29 @@ class _TodoPageState extends State<TodoPage> {
         ),
         body: Column(
           children: [
-            TextField(
-              controller: controller,
+            Form(
+              child: TextFormField(
+                controller: controller,
+                validator: (value) {
+                  if (value?.isEmpty ?? true) {
+                    return 'Please enter some text';
+                  }
+                  return null;
+                },
+                onFieldSubmitted: (value) {
+                  if (value.isNotEmpty) {
+                    addTodo();
+                  }
+                },
+              ),
+
             ),
             Center(
               child: ElevatedButton(
                 onPressed: () {
                   addTodo();
                 },
-                child: Icon(Icons.add),
+                child: const Icon(Icons.add),
               ),
             ),
             Expanded(
@@ -51,46 +65,13 @@ class _TodoPageState extends State<TodoPage> {
                       child: CircularProgressIndicator(),
                     );
                   }
-
                   var foundTodos =
                       (snapshot.data?.get("todos") as List<dynamic>)
                           .map((e) => Todo.fromJson(e))
                           .toList();
 
                   todos = foundTodos;
-
-                  return ListView.builder(
-                    itemBuilder: (context, index) {
-                      if(todos[index].completed) {
-                        return SizedBox();
-                      }
-                      return Dismissible(
-                        key: GlobalKey(),
-                        child: Container(
-                          padding: EdgeInsets.all(8),
-                          alignment: Alignment.centerLeft,
-                          width: double.infinity,
-                          height: 50,
-                          child: Text(todos[index].title),
-                          color: Colors.white,
-                        ),
-                        background: Container(
-                          padding: EdgeInsets.only(left: 16),
-                          color: Colors.red,
-                          alignment: Alignment.centerLeft,
-                          child: const Icon(
-                            Icons.delete,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        onDismissed: (direction) {
-                          deleteAt(index);
-                        },
-                        direction: DismissDirection.startToEnd,
-                      );
-                    },
-                    itemCount: todos.length,
-                  );
+                  return TodoList(todos: todos, deleteAt: deleteAt,);
                 },
               ),
             ),
@@ -103,7 +84,6 @@ class _TodoPageState extends State<TodoPage> {
   void addTodo() {
     todos.add(Todo(controller.text, false));
     var jsonString = todos.map((todo) => todo.toJson()).toList();
-    print(jsonString);
     firestore.collection("users").doc("3BIxVCSwl8jXUMuW6JKc").set({
       "todos": jsonString,
     });

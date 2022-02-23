@@ -1,61 +1,44 @@
-import 'dart:convert';
-import 'dart:io';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebasetodos/domain/todo.dart';
 import 'package:flutter/material.dart';
 
-class TodoList extends StatefulWidget {
-  List<Todo> todos;
-  final FirebaseFirestore firestore;
+class TodoList extends StatelessWidget {
+  final List<Todo> todos;
   final Function(int index) deleteAt;
-  final Function(List<Todo> todos) setTodos;
-
-  TodoList(
-      {Key? key,
-      required this.todos,
-      required this.firestore,
-      required this.deleteAt,
-      required this.setTodos})
-      : super(key: key);
-
-  @override
-  _TodoListState createState() => _TodoListState();
-}
-
-class _TodoListState extends State<TodoList> {
-
+  const TodoList({Key? key, required this.todos, required this.deleteAt}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
       itemBuilder: (context, index) {
+        if(todos[index].completed) {
+          return const SizedBox();
+        }
         return Dismissible(
           key: GlobalKey(),
           child: Container(
-            padding: EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8),
             alignment: Alignment.centerLeft,
             width: double.infinity,
             height: 50,
-            child: Text(widget.todos[index].title),
+            child: Text(todos[index].title),
             color: Colors.white,
           ),
           background: Container(
-            padding: EdgeInsets.only(left: 16),
-            color: Colors.red,
+            padding: const EdgeInsets.only(left: 16),
+            color: Colors.green,
             alignment: Alignment.centerLeft,
             child: const Icon(
-              Icons.delete,
-              color: Colors.grey,
+              Icons.check,
+              color: Colors.white,
             ),
           ),
           onDismissed: (direction) {
-            widget.deleteAt(index);
+            deleteAt(index);
           },
           direction: DismissDirection.startToEnd,
         );
       },
-      itemCount: widget.todos.length,
+      itemCount: todos.length,
     );
   }
 }
