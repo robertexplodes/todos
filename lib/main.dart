@@ -1,3 +1,4 @@
+import 'package:firebasetodos/pages/completed_todos.dart';
 import 'package:firebasetodos/pages/todo_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -21,9 +22,12 @@ class TodoApp extends StatefulWidget {
 class _TodoAppState extends State<TodoApp> {
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      routes: {
+        '/': (context) => TodoPage(),
+        CompletedTodos.route: (context) => CompletedTodos(),
+      },
       title: 'Todos',
-      home: TodoPage(),
     );
   }
 }

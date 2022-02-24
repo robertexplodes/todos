@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebasetodos/domain/todo.dart';
+import 'package:firebasetodos/pages/completed_todos.dart';
 import 'package:firebasetodos/widgets/list.dart';
 import 'package:flutter/material.dart';
 
@@ -26,6 +27,22 @@ class _TodoPageState extends State<TodoPage> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
+        drawer: Drawer(
+          child: Column(
+            children: [
+              TextButton(
+                onPressed: () {},
+                child: Text('Todos'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).popAndPushNamed(CompletedTodos.route);
+                },
+                child: Text('completed'),
+              ),
+            ],
+          ),
+        ),
         appBar: AppBar(
           title: const Text('Todos'),
         ),
@@ -46,7 +63,6 @@ class _TodoPageState extends State<TodoPage> {
                   }
                 },
               ),
-
             ),
             Center(
               child: ElevatedButton(
@@ -71,7 +87,10 @@ class _TodoPageState extends State<TodoPage> {
                           .toList();
 
                   todos = foundTodos;
-                  return TodoList(todos: todos, deleteAt: deleteAt,);
+                  return TodoList(
+                    todos: todos,
+                    deleteAt: deleteAt,
+                  );
                 },
               ),
             ),
