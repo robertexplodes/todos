@@ -12,6 +12,13 @@ class CompletedTodos extends StatefulWidget {
 class _CompletedTodosState extends State<CompletedTodos> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Completed Todos'),
+      ),
+      body: Center(
+        child: Text('Completed Todos'),
+      ),
+    );
   }
 }

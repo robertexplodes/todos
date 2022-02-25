@@ -25,8 +25,7 @@ class _TodoPageState extends State<TodoPage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
+    return Scaffold(
         drawer: Drawer(
           child: Column(
             children: [
@@ -96,7 +95,6 @@ class _TodoPageState extends State<TodoPage> {
             ),
           ],
         ),
-      ),
     );
   }
 
