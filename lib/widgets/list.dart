@@ -4,13 +4,20 @@ import 'package:flutter/material.dart';
 class TodoList extends StatelessWidget {
   final List<Todo> todos;
   final Function(int index) deleteAt;
-  const TodoList({Key? key, required this.todos, required this.deleteAt}) : super(key: key);
+  final bool showCompleted;
+
+  const TodoList(
+      {Key? key,
+      required this.todos,
+      required this.deleteAt,
+      this.showCompleted = false})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
       itemBuilder: (context, index) {
-        if(todos[index].completed) {
+        if (!showCompleted && todos[index].completed || showCompleted && !todos[index].completed) {
           return const SizedBox();
         }
         return Dismissible(
@@ -20,7 +27,22 @@ class TodoList extends StatelessWidget {
             alignment: Alignment.centerLeft,
             width: double.infinity,
             height: 50,
-            child: Text(todos[index].title),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  backgroundColor: todos[index].completed ? Colors.grey : Colors.blue,
+                  radius: 5,
+                ),
+                const SizedBox(width: 10),
+                Text(
+                todos[index].title,
+                style: todos[index].completed
+                    ? const TextStyle(
+                        decoration: TextDecoration.lineThrough,
+                      )
+                    : null,
+              ),]
+            ),
             color: Colors.white,
           ),
           background: Container(
@@ -33,9 +55,14 @@ class TodoList extends StatelessWidget {
             ),
           ),
           onDismissed: (direction) {
-            deleteAt(index);
+            // TODO: fix this
+            if(direction == DismissDirection.endToStart) {
+              deleteAt(index);
+            } else {
+              todos[index].completed = !todos[index].completed;
+            }
           },
-          direction: DismissDirection.startToEnd,
+          direction: showCompleted ? DismissDirection.horizontal : DismissDirection.startToEnd,
         );
       },
       itemCount: todos.length,

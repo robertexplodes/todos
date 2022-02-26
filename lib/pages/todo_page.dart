@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebasetodos/domain/todo.dart';
 import 'package:firebasetodos/pages/completed_todos.dart';
+import 'package:firebasetodos/widgets/drawer.dart';
 import 'package:firebasetodos/widgets/list.dart';
 import 'package:flutter/material.dart';
 
@@ -26,75 +27,64 @@ class _TodoPageState extends State<TodoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        drawer: Drawer(
-          child: Column(
+      drawer: TodoDrawer(),
+      appBar: AppBar(
+        title: const Text('Todos'),
+      ),
+      body: Column(
+        children: [
+          Row(
             children: [
-              TextButton(
-                onPressed: () {},
-                child: Text('Todos'),
+              Expanded(
+                child: Form(
+                  child: TextFormField(
+                    controller: controller,
+
+                    validator: (value) {
+                      if (value?.isEmpty ?? true) {
+                        return 'Please enter some text';
+                      }
+                      return null;
+                    },
+                    onFieldSubmitted: (value) {
+                      if (value.isNotEmpty) {
+                        addTodo();
+                      }
+                    },
+                  ),
+                ),
               ),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).popAndPushNamed(CompletedTodos.route);
-                },
-                child: Text('completed'),
-              ),
-            ],
-          ),
-        ),
-        appBar: AppBar(
-          title: const Text('Todos'),
-        ),
-        body: Column(
-          children: [
-            Form(
-              child: TextFormField(
-                controller: controller,
-                validator: (value) {
-                  if (value?.isEmpty ?? true) {
-                    return 'Please enter some text';
-                  }
-                  return null;
-                },
-                onFieldSubmitted: (value) {
-                  if (value.isNotEmpty) {
-                    addTodo();
-                  }
-                },
-              ),
-            ),
-            Center(
-              child: ElevatedButton(
+              ElevatedButton(
                 onPressed: () {
                   addTodo();
                 },
                 child: const Icon(Icons.add),
               ),
-            ),
-            Expanded(
-              child: StreamBuilder<DocumentSnapshot>(
-                stream: documentStream,
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                  var foundTodos =
-                      (snapshot.data?.get("todos") as List<dynamic>)
-                          .map((e) => Todo.fromJson(e))
-                          .toList();
-
-                  todos = foundTodos;
-                  return TodoList(
-                    todos: todos,
-                    deleteAt: deleteAt,
+            ],
+          ),
+          Expanded(
+            child: StreamBuilder<DocumentSnapshot>(
+              stream: documentStream,
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
                   );
-                },
-              ),
+                }
+                var foundTodos = (snapshot.data?.get("todos") as List<dynamic>)
+                    .map((e) => Todo.fromJson(e))
+                    .toList();
+
+                todos = foundTodos;
+                return TodoList(
+                  todos: todos,
+                  deleteAt: deleteAt,
+                );
+              },
             ),
-          ],
-        ),
+          ),
+        ],
+      ),
     );
   }
 

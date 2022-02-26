@@ -1,17 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebasetodos/domain/todo.dart';
 import 'package:flutter/cupertino.dart';
 
 class TodoProvider with ChangeNotifier {
 
-  final todos = <Todo>[];
+  final _todos = <Todo>[];
 
-  void addTodo(Todo todo) {
-    todos.add(todo);
-    notifyListeners();
-  }
 
   void completeTodoIndex(int index) {
-    todos[index].completed = true;
+    _todos[index].completed = true;
     notifyListeners();
   }
 
