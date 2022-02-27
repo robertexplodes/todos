@@ -17,6 +17,9 @@ class TodoProvider with ChangeNotifier {
 
   List<Todo> get todos => _todos;
 
+  List<Todo> todosByState(bool completed) => _todos.where((todo) => todo.completed == completed).toList();
+
+
   void completeTodoIndex(int index) async {
     todos[index].completed = !todos[index].completed;
     await setDatabase();

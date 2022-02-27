@@ -1,4 +1,3 @@
-import 'package:firebasetodos/domain/todo.dart';
 import 'package:firebasetodos/widgets/dismissible_background.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

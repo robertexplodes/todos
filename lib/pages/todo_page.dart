@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebasetodos/domain/todo.dart';
-import 'package:firebasetodos/pages/completed_todos.dart';
 import 'package:firebasetodos/widgets/drawer.dart';
 import 'package:firebasetodos/widgets/todo_list.dart';
 import 'package:flutter/material.dart';
@@ -16,46 +15,23 @@ class TodoPage extends StatefulWidget {
 }
 
 class _TodoPageState extends State<TodoPage> {
-
   var controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: TodoDrawer(),
+      drawer: const TodoDrawer(),
       appBar: AppBar(
         title: const Text('Todos'),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          addTodo();
+        },
+        child: const Icon(Icons.add),
+      ),
       body: Column(
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Form(
-                  child: TextFormField(
-                    controller: controller,
-                    validator: (value) {
-                      if (value?.isEmpty ?? true) {
-                        return 'Please enter some text';
-                      }
-                      return null;
-                    },
-                    onFieldSubmitted: (value) {
-                      if (value.isNotEmpty) {
-                        addTodo();
-                      }
-                    },
-                  ),
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  addTodo();
-                },
-                child: const Icon(Icons.add),
-              ),
-            ],
-          ),
           Expanded(
             child: StreamBuilder<DocumentSnapshot>(
               stream: Provider.of<TodoProvider>(context).documentStream,
@@ -65,7 +41,6 @@ class _TodoPageState extends State<TodoPage> {
                     child: CircularProgressIndicator(),
                   );
                 }
-
                 return TodoList(
                   deleteAt: deleteAt,
                 );
@@ -78,7 +53,8 @@ class _TodoPageState extends State<TodoPage> {
   }
 
   void addTodo() {
-    Provider.of<TodoProvider>(context, listen: false).addTodo(Todo(controller.text, false));
+    Provider.of<TodoProvider>(context, listen: false)
+        .addTodo(Todo(controller.text, false));
     controller.clear();
   }
 
