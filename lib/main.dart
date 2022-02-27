@@ -1,4 +1,4 @@
-import 'package:firebasetodos/domain/TodoProvider.dart';
+import 'package:firebasetodos/domain/todo_provider.dart';
 import 'package:firebasetodos/pages/completed_todos.dart';
 import 'package:firebasetodos/pages/todo_page.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +29,7 @@ class TodoApp extends StatefulWidget {
 class _TodoAppState extends State<TodoApp> {
   @override
   Widget build(BuildContext context) {
+    Provider.of<TodoProvider>(context).init();
     return MaterialApp(
       routes: {
         '/': (context) => TodoPage(),
