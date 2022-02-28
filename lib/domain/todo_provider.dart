@@ -52,4 +52,10 @@ class TodoProvider with ChangeNotifier {
   void init() async {
     await _loadTodos().then((value) => _todos = value);
   }
+
+  void delete(int index) async {
+    _todos.removeAt(index);
+    await setDatabase();
+    notifyListeners();
+  }
 }

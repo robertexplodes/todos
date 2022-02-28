@@ -46,11 +46,36 @@ class TodoList extends StatelessWidget {
             color: Colors.white,
           ),
           background: DismissibleBackground(completed: showCompleted),
+          secondaryBackground: Container(
+            color: Colors.red,
+            child: Padding(
+              padding: const EdgeInsets.all(15),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: const [
+                  Icon(
+                    Icons.delete,
+                    color: Colors.white,
+                  ),
+                  Text(
+                    'Move to trash',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ],
+              ),
+            ),
+          ),
           onDismissed: (direction) {
-            Provider.of<TodoProvider>(context, listen: false)
-                .completeTodoIndex(index);
+            if (direction == DismissDirection.endToStart) {
+              Provider.of<TodoProvider>(context, listen: false).delete(index);
+            } else {
+              Provider.of<TodoProvider>(context, listen: false)
+                  .completeTodoIndex(index);
+            }
           },
-          direction: DismissDirection.startToEnd,
+          direction: showCompleted
+              ? DismissDirection.horizontal
+              : DismissDirection.startToEnd,
         );
       },
       itemCount: todos.length,
