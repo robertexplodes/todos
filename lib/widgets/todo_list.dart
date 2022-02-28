@@ -13,8 +13,8 @@ class TodoList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var todos = Provider.of<TodoProvider>(context).todosByState(showCompleted);
-    if(todos.isEmpty) {
+    var todos = Provider.of<TodoProvider>(context).todos;
+    if(Provider.of<TodoProvider>(context).todosByState(showCompleted).isEmpty) {
       return Center(
         child: Text('No todos yet!', style: Theme.of(context).textTheme.headline6),
       );
