@@ -13,7 +13,12 @@ class TodoList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var todos = Provider.of<TodoProvider>(context).todos;
+    var todos = Provider.of<TodoProvider>(context).todosByState(showCompleted);
+    if(todos.isEmpty) {
+      return Center(
+        child: Text('No todos yet!', style: Theme.of(context).textTheme.headline6),
+      );
+    }
     return ListView.builder(
       itemBuilder: (context, index) {
         if (!showCompleted && todos[index].completed ||
@@ -56,10 +61,6 @@ class TodoList extends StatelessWidget {
                   Icon(
                     Icons.delete,
                     color: Colors.white,
-                  ),
-                  Text(
-                    'Move to trash',
-                    style: TextStyle(color: Colors.white),
                   ),
                 ],
               ),

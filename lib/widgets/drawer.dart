@@ -14,7 +14,12 @@ class TodoDrawer extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.blue,
             ),
-            child: Text('Todo List'),
+            child: Center(
+              child: Text(
+                'Todo List',
+                style: TextStyle(fontSize: 20, color: Colors.white),
+              ),
+            ),
           ),
           ListTile(
             title: TextButton(
