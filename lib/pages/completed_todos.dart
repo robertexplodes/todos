@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebasetodos/domain/todo.dart';
 import 'package:firebasetodos/domain/todo_provider.dart';
 import 'package:firebasetodos/widgets/todo_list.dart';
 import 'package:flutter/material.dart';
@@ -20,20 +19,18 @@ class _CompletedTodosState extends State<CompletedTodos> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Completed Todos'),
+        title: const Text('Completed Todos'),
       ),
-      body: Container(
-        child: StreamBuilder<DocumentSnapshot>(
-          stream: Provider.of<TodoProvider>(context).documentStream,
-          builder: (context, snapshot) {
-            return TodoList(
-              deleteAt: (index) async {
-                Provider.of<TodoProvider>(context).completeTodoIndex(index);
-              },
-              showCompleted: true,
-            );
-          },
-        ),
+      body: StreamBuilder<DocumentSnapshot>(
+        stream: Provider.of<TodoProvider>(context).documentStream,
+        builder: (context, snapshot) {
+          return TodoList(
+            deleteAt: (index) async {
+              Provider.of<TodoProvider>(context).completeTodoIndex(index);
+            },
+            showCompleted: true,
+          );
+        },
       ),
     );
   }

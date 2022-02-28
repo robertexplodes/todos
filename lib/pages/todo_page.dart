@@ -17,6 +17,8 @@ class TodoPage extends StatefulWidget {
 class _TodoPageState extends State<TodoPage> {
   var controller = TextEditingController();
 
+  final _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,7 +28,7 @@ class _TodoPageState extends State<TodoPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          addTodo();
+          callAddTodoModal();
         },
         child: const Icon(Icons.add),
       ),
@@ -52,10 +54,69 @@ class _TodoPageState extends State<TodoPage> {
     );
   }
 
-  void addTodo() {
-    Provider.of<TodoProvider>(context, listen: false)
-        .addTodo(Todo(controller.text, false));
-    controller.clear();
+  void callAddTodoModal() {
+    showModalBottomSheet(
+      context: context,
+      isDismissible: true,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      builder: (context) => SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            height: 100,
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Form(
+                    key: _formKey,
+                    child: TextFormField(
+                      controller: controller,
+                      decoration: const InputDecoration(
+                        hintText: 'Add todo',
+                      ),
+                      autofocus: true,
+                      validator: (value) {
+                        return validateInput(value);
+                      },
+                    ),
+                  ),
+                ),
+                CircleAvatar(
+                  backgroundColor: Colors.blue,
+                  child: IconButton(
+                    icon: const Icon(Icons.add, color: Colors.white),
+                    onPressed: () {
+                      handleSubmit(context);
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void handleSubmit(BuildContext context) {
+    if (_formKey.currentState!.validate()) {
+      Provider.of<TodoProvider>(context, listen: false)
+          .addTodo(Todo(controller.text, false));
+      controller.clear();
+      Navigator.pop(context);
+    }
+  }
+
+  String? validateInput(String? value) {
+    if (value == null) return null;
+    if (value.isEmpty) {
+      return 'Please enter some text';
+    }
+    return null;
   }
 
   void deleteAt(int index) async {

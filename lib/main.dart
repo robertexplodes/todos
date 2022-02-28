@@ -32,10 +32,10 @@ class _TodoAppState extends State<TodoApp> {
     Provider.of<TodoProvider>(context).init();
     return MaterialApp(
       routes: {
-        '/': (context) => TodoPage(),
-        CompletedTodos.route: (context) => CompletedTodos(),
+        '/': (context) => const TodoPage(),
+        CompletedTodos.route: (context) => const CompletedTodos(),
       },
-      title: 'Todos',
+      title: 'TodoApp',
     );
   }
 }
