@@ -3,9 +3,6 @@ import 'package:firebasetodos/domain/todo.dart';
 import 'package:flutter/cupertino.dart';
 
 class TodoProvider with ChangeNotifier {
-
-
-
   var _todos = <Todo>[];
 
   final firestore = FirebaseFirestore.instance;
@@ -17,11 +14,17 @@ class TodoProvider with ChangeNotifier {
 
   List<Todo> get todos => _todos;
 
-  List<Todo> todosByState(bool completed) => _todos.where((todo) => todo.completed == completed).toList();
-
+  List<Todo> todosByState(bool completed) =>
+      _todos.where((todo) => todo.completed == completed).toList();
 
   void completeTodoIndex(int index) async {
     todos[index].completed = !todos[index].completed;
+    await setDatabase();
+    notifyListeners();
+  }
+
+  void clearCompletedTodos() async {
+    _todos.removeWhere((todo) => todo.completed);
     await setDatabase();
     notifyListeners();
   }
@@ -33,7 +36,11 @@ class TodoProvider with ChangeNotifier {
   }
 
   Future<List<Todo>> _loadTodos() async {
-    return await firestore.collection("users").doc("3BIxVCSwl8jXUMuW6JKc").get().then((value) {
+    return await firestore
+        .collection("users")
+        .doc("3BIxVCSwl8jXUMuW6JKc")
+        .get()
+        .then((value) {
       return (value.data()?["todos"] as List<dynamic>)
           .map((e) => Todo.fromJson(e))
           .toList();

@@ -14,7 +14,6 @@ class CompletedTodos extends StatefulWidget {
 }
 
 class _CompletedTodosState extends State<CompletedTodos> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,6 +30,14 @@ class _CompletedTodosState extends State<CompletedTodos> {
             showCompleted: true,
           );
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Provider.of<TodoProvider>(context, listen: false)
+              .clearCompletedTodos();
+        },
+        child: const Icon(Icons.delete),
+        backgroundColor: Colors.red,
       ),
     );
   }
